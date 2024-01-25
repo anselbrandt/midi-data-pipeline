@@ -1,0 +1,26 @@
+{
+  "name": "midi-data-pipeline",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vitest",
+    "cli": "tsx src/cli.ts",
+    "debug": "tsx src/debug.ts",
+    "start": "tsx src/index.ts",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.5",
+    "htmlparser2": "^9.1.0",
+    "node-fetch": "^3.3.2",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.1"
+  },
+  "dependencies": {
+    "@types/prompts": "^2.4.9",
+    "midifile-ts": "^1.5.1",
+    "prompts": "^2.4.2"
+  }
+}
