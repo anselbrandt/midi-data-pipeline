@@ -3,4 +3,6 @@ failed
 midi
 multitrack
 out
+playable
+notplayable
 .DS_Store
