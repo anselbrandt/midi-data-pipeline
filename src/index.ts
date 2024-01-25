@@ -1,10 +1,4 @@
-import {
-  downloadData,
-  getDupes,
-  retry,
-  getDeleteList,
-  deleteDupes,
-} from "./pipeline";
+import { clean } from "./pipeline";
 
 async function main() {
   const urls = [
@@ -17,6 +11,7 @@ async function main() {
   // const dupes = await getDupes();
   // const deleteList = await getDeleteList(dupes);
   // await deleteDupes(deleteList);
+  await clean();
 }
 
 main().catch((error) => console.log(error));

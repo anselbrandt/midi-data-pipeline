@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs/promises";
-import { read } from "midifile-ts";
+import { read, write } from "midifile-ts";
 import { MidiFile, AnyEvent } from "midifile-ts";
 import { mkdirs } from "./scripts";
 
@@ -43,25 +43,54 @@ export const cleanFile = (midi: MidiFile): MidiFile => {
 export const clean = async () => {
   const dataDir = "./data";
   const outDir = "./out";
-  const zerosDir = "./zeros";
-  await mkdirs([outDir, zerosDir]);
+  const failedDir = "./failed";
+  const multitrackDir = "./multitrack";
+  const midiDir = "./midi";
+
+  await mkdirs([outDir, failedDir, multitrackDir, midiDir]);
+
   const files = await fs.readdir(dataDir);
-  for (const file of files) {
+  for (const i in files) {
+    const file = files[i];
     if (file === ".DS_Store") continue;
     const inpath = path.join(dataDir, file);
-    const outpath = path.join(outDir, file.replace(".mid", ".json"));
-    const zerosPath = path.join(zerosDir, file.replace(".mid", ".json"));
-    const zeroMidiPath = path.join(zerosDir, file);
-    const buffer = await fs.readFile(inpath);
-    const midi = read(buffer);
-    const cleanMidi = cleanFile(midi);
-    const tracks = cleanMidi.tracks;
-    if (tracks.length > 1) {
-      await fs.writeFile(outpath, JSON.stringify(cleanMidi));
-    }
-    if (tracks.length === 0) {
-      await fs.writeFile(zeroMidiPath, buffer);
-      await fs.writeFile(zerosPath, JSON.stringify(midi));
+    const outpath = path.join(outDir, `${i}.json`);
+    const midiPath = path.join(midiDir, `${i}.mid`);
+
+    const multitrackJsonPath = path.join(
+      multitrackDir,
+      file.replace(".mid", ".json")
+    );
+    const multitrackMidiPath = path.join(multitrackDir, file);
+
+    const failedJsonPath = path.join(failedDir, file.replace(".mid", ".json"));
+    const failedMidiPAth = path.join(failedDir, file);
+
+    try {
+      const buffer = await fs.readFile(inpath);
+      const midi = read(buffer);
+      const cleanMidi = cleanFile(midi);
+      const tracks = cleanMidi.tracks;
+
+      if (tracks.length === 1) {
+        const midiBuffer = write(
+          cleanMidi.tracks,
+          cleanMidi.header.ticksPerBeat
+        );
+        await fs.writeFile(outpath, JSON.stringify(cleanMidi));
+        await fs.writeFile(midiPath, midiBuffer);
+      }
+
+      if (tracks.length > 1) {
+        await fs.writeFile(multitrackMidiPath, buffer);
+        await fs.writeFile(multitrackJsonPath, JSON.stringify(cleanMidi));
+      }
+      if (tracks.length === 0) {
+        await fs.writeFile(failedMidiPAth, buffer);
+        await fs.writeFile(failedJsonPath, JSON.stringify(midi));
+      }
+    } catch (error) {
+      if (error) console.log(file, "may be corrupt");
     }
   }
 };
