@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getHrefs, getLinks } from "./scripts";
+import { getHrefs, getCleanHrefs } from "./scripts";
 
 const html = `<a href="https://www.bushgrafts.com/jazz/Midi%20site/SweetWay2.mid"><br />In Your Own Sweet Way (tk2)</a> [M]<br />`;
 
@@ -23,11 +23,11 @@ describe("parse test", () => {
     ]);
   });
   it("get links", () => {
-    const links = getLinks({ hrefs, url });
+    const links = getCleanHrefs({ hrefs, url });
     expect(links).toStrictEqual([
       {
         href: "https://bushgrafts.com/jazz/Effendi%20-%20McCoy%20Tyner.mid",
-        name: "Effendi - McCoy Tyne..>.mid",
+        name: "Effendi_-_McCoy_Tyne.mid",
       },
     ]);
   });
