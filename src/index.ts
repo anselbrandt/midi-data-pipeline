@@ -1,3 +1,5 @@
+import { clean } from "./pipeline";
+
 async function main() {
   const urls = [
     "https://bushgrafts.com/midi/",
@@ -9,7 +11,7 @@ async function main() {
   // const dupes = await getDupes();
   // const deleteList = await getDeleteList(dupes);
   // await deleteDupes(deleteList);
-  // await clean();
+  await clean();
 }
 
 main().catch((error) => console.log(error));

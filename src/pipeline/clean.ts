@@ -43,28 +43,24 @@ export const cleanFile = (midi: MidiFile): MidiFile => {
 export const clean = async () => {
   const dataDir = "./data";
   const outDir = "./out";
-  const failedDir = "./failed";
   const multitrackDir = "./multitrack";
-  const midiDir = "./midi";
+  const failedDir = "./failed";
 
-  await mkdirs([outDir, failedDir, multitrackDir, midiDir]);
+  await mkdirs([outDir, multitrackDir, failedDir]);
 
   const files = await fs.readdir(dataDir);
-  for (const i in files) {
-    const file = files[i];
+  for (const file of files) {
     if (file === ".DS_Store") continue;
     const inpath = path.join(dataDir, file);
-    const outpath = path.join(outDir, `${i}.json`);
-    const midiPath = path.join(midiDir, `${i}.mid`);
+    const outpath = path.join(outDir, file);
 
+    const multitrackMidiPath = path.join(multitrackDir, file);
     const multitrackJsonPath = path.join(
       multitrackDir,
       file.replace(".mid", ".json")
     );
-    const multitrackMidiPath = path.join(multitrackDir, file);
-
+    const failedMidiPath = path.join(failedDir, file);
     const failedJsonPath = path.join(failedDir, file.replace(".mid", ".json"));
-    const failedMidiPAth = path.join(failedDir, file);
 
     try {
       const buffer = await fs.readFile(inpath);
@@ -77,16 +73,14 @@ export const clean = async () => {
           cleanMidi.tracks,
           cleanMidi.header.ticksPerBeat
         );
-        await fs.writeFile(outpath, JSON.stringify(cleanMidi));
-        await fs.writeFile(midiPath, midiBuffer);
+        await fs.writeFile(outpath, midiBuffer);
       }
-
       if (tracks.length > 1) {
         await fs.writeFile(multitrackMidiPath, buffer);
         await fs.writeFile(multitrackJsonPath, JSON.stringify(cleanMidi));
       }
       if (tracks.length === 0) {
-        await fs.writeFile(failedMidiPAth, buffer);
+        await fs.writeFile(failedMidiPath, buffer);
         await fs.writeFile(failedJsonPath, JSON.stringify(midi));
       }
     } catch (error) {
