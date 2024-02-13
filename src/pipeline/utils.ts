@@ -13,6 +13,22 @@ const tracksToPiano = (tracks: AnyEvent[][]) =>
         (event) =>
           !(event.type === "channel" && event.subtype === "programChange")
       )
+      .filter(
+        (event) =>
+          !(
+            event.type === "channel" &&
+            event.subtype === "controller" &&
+            event.controllerType === 7
+          )
+      )
+      .filter(
+        (event) =>
+          !(
+            event.type === "channel" &&
+            event.subtype === "controller" &&
+            event.controllerType === 10
+          )
+      )
   );
 
 const isNotEmpty = (track: AnyEvent[]) =>
