@@ -41,7 +41,7 @@ export const clean = async () => {
       }
       if (tracks.length > 2) {
         await fs.writeFile(multitrackMidiPath, buffer);
-        await fs.writeFile(multitrackJsonPath, JSON.stringify(cleanMidi));
+        await fs.writeFile(multitrackJsonPath, JSON.stringify(midi));
       }
       if (tracks.length === 0) {
         await fs.writeFile(failedMidiPath, buffer);

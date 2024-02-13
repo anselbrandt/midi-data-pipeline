@@ -34,7 +34,7 @@ const isBass = (track: AnyEvent[]) =>
   );
 
 const isMeta = (track: AnyEvent[]) =>
-  track.some((event) => event.type === "meta");
+  track.every((event) => event.type === "meta");
 
 export const cleanFile = (midi: MidiFile): MidiFile => {
   const header = midi.header;
